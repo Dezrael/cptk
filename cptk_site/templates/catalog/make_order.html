@@ -1,0 +1,21 @@
+{% extends "main/layout.html" %}
+{% load staticfiles %}
+{% block content %}
+<h1>Оформление заказа</h1>
+
+<form method="POST" onsubmit="clearCartData()">
+    {% csrf_token %}
+    Фамилия: {{ form.last_name }} <br>
+    Имя: {{ form.first_name }} <br>
+    E-mail: {{ form.email }} <br>
+    Адрес: {{ form.address }} <br> 
+    Комментарий к заказу: {{ form.comment }} <br> 
+    <input type="hidden" id="productsVal" name="products">
+    <input type="hidden" id="totalVal" name="total">
+    <input type="submit" value="Сделать заказ">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'catalog/js/make_order.js' %}"></script>
+{% endblock %}

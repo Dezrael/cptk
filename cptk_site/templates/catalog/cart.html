@@ -1,0 +1,39 @@
+{% extends "main/layout.html" %}
+{% load staticfiles %}
+{% block content %}
+<h1>Корзина</h1>
+
+<div id="cartApp">
+    <button onclick="clearCartData()" v-on:click="clearCart">Очистить корзину</button>
+    <div v-if="cartCount == 0">
+        <div>
+            <h5>В корзине нет товаров</h5>
+        </div>
+    </div>
+    <div v-else>
+        <table class="table">
+            <tr>
+                <th>Наименование</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th>Сумма</th>
+                <th></th>
+            </tr>
+            <tr v-for="product in cart">
+                <td>{* product.title *}</td>
+                <td>{* product.price *} руб.</td>
+                <td><input type="number" v-model="product.count" v-on:change="checkCount(product)"></td>
+                <td>{* (product.count * product.price).toFixed(2) *} руб.</td>
+            </tr>
+        </table>
+        <br>
+        <a href="{% url 'make_order' %}">Оформить заказ</a>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'main/js/vue-dev.js' %}"></script>
+<script src="{% static 'catalog/js/cart.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "main/layout.html" %}
+{% block title %}Добавить товар{% endblock %}
+{% block content %}
+{% load staticfiles %}
+<div>
+    {{ error }}
+</div>
+<form method="POST" id="productApp" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>Добавить продукт</p>
+    Название: {{ form.title }} <br>
+    Категория: {{ form.category }} <br>
+    Производитель: {{ form.manufacturer }} <br>
+    Цена: {{ form.price }} руб<br> 
+    Краткое описание: {{ form.s_description }} <br> 
+    Полное описание: {{ form.description }} <br>
+    Главная картинка: {{ form.img }} <br>
+    Ещё картинки: <input name="images" type="file" accept="image/*" multiple> <br>
+    <div v-for="attr in attributes">
+        {* attr.title *} : <input type="text" v-bind:name="'attr_' + attr.id"> {* attr.measure *}
+    </div>
+    
+    <input type="submit" value="Добавить">
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'main/js/vue-dev.js' %}"></script>
+<script src="{% static 'catalog/js/add_product.js' %}"></script>
+{% endblock %}
