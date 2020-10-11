@@ -10,10 +10,29 @@ import json
 
 
 def catalog(request):
+    categories = Category.objects.filter(parent = None)
     return render(
         request,
-        'catalog/add_product.html'
+        'catalog/catalog.html',
+        context = {'categories': categories}
     )
+
+def category(request, slug):
+    category = Category.objects.get(slug__iexact=slug)
+    children = Category.objects.filter(parent = category)
+    if len(children) > 0:
+        return render(
+            request,
+            'catalog/category.html',
+            context = {'category': category, 'children': children}
+        )
+    else:
+        products = Product.objects.filter(category = category)
+        return render(
+            request,
+            'catalog/products.html',
+            context = {'category': category, 'products': products}
+        )
 
 def cart(request):
     return render(
@@ -27,6 +46,14 @@ def products(request):
         request,
         'catalog/products.html',
         context = {'products': products}
+    )
+
+def product(request, slug):
+    product = Product.objects.get(slug__iexact=slug)
+    return render(
+        request,
+        'catalog/product.html',
+        context = {'product': product}
     )
 
 def make_order(request):

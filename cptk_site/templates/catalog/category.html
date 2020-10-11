@@ -1,0 +1,9 @@
+{% extends "main/layout.html" %}
+{% load staticfiles %}
+{% block content %}
+<h1>{{ category.title }}</h1>
+{% for child in children %}
+<a href="{{ child.get_absolute_url }}">{{ child.title }}</a>
+<hr>
+{% endfor %}
+{% endblock %}

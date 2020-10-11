@@ -1,10 +1,14 @@
 {% extends "main/layout.html" %}
 {% block title %}Список товаров{% endblock %}
 {% block content %}
-<h1>Товары</h1>
+{% if category %}
+<h1>{{ category.title }}</h1>
+{% else %}
+<h1> Товары </h1>
+{% endif %}
 <br>
 {% for product in products %}
-{{ product.title }}
+<a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
 <button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
 <hr>
 {% endfor %}

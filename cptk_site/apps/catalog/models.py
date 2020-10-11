@@ -3,6 +3,7 @@ from django.utils import timezone
 import datetime, os
 from django.contrib import admin
 import uuid
+from django.shortcuts import reverse
 
 from slugify import slugify
 
@@ -85,6 +86,9 @@ class Category(models.Model):
 	def __str__(self):
 		return self.title
 
+	def get_absolute_url(self):
+		return reverse('category',kwargs={'slug': self.slug})
+
 	class Meta():
 		db_table = 'category'
 		verbose_name = "Категория"
@@ -107,6 +111,9 @@ class Product(models.Model):
 	s_description = models.TextField(verbose_name="Краткое описание", max_length=600)
 	description	= models.TextField(verbose_name="Полное описание", max_length=2000)
 	add_date = models.DateTimeField(verbose_name='Дата добавления', auto_now_add=True)
+
+	def get_absolute_url(self):
+		return reverse('product',kwargs={'slug': self.slug})
 
 	def save(self, *args, **kwargs):
 		if not self.slug:

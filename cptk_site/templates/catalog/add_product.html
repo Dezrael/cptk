@@ -17,7 +17,7 @@
     Главная картинка: {{ form.img }} <br>
     Ещё картинки: <input name="images" type="file" accept="image/*" multiple> <br>
     <div v-for="attr in attributes">
-        {* attr.title *} : <input type="text" v-bind:name="'attr_' + attr.id"> {* attr.measure *}
+        {* attr.title *} : <input type="text" required v-bind:name="'attr_' + attr.id"> {* attr.measure *}
     </div>
     
     <input type="submit" value="Добавить">
