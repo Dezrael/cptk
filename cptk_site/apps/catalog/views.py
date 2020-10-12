@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders, ProductFiles
+from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders, ProductFiles, SelectableAttribute, AtrributeChoises, SelectableAttribute_list
 from .forms import ProductForm, OrderForm
 
 from rest_framework.response import Response
@@ -89,6 +89,7 @@ def add_product(request):
         if form.is_valid():
             post_f = form.save(commit=False)
             attributes = Attribute.objects.filter(category = post_f.category)
+            sel_attributes = SelectableAttribute.objects.filter(category = post_f.category)
             post_f.save()
 
             for image in request.FILES.getlist('images'):
@@ -102,6 +103,12 @@ def add_product(request):
 
             for attribute in attributes:
                 attr = Attribute_list(attribute = attribute, product = post_f, value = request.POST.get('attr_{id}'.format(id=attribute.id) , 0))
+                attr.save()
+
+            for attribute in sel_attributes:
+                choise_id = request.POST.get('sel_attr_{id}'.format(id=attribute.id) , 0)
+                choise = AtrributeChoises.objects.get(id = choise_id)
+                attr = SelectableAttribute_list(attribute = attribute, product = post_f, value = choise)
                 attr.save()
 
             return redirect('add_product')
@@ -126,3 +133,11 @@ class GetAttributesView(APIView):
         category = Category.objects.get(id = category_id)
         attributes = [{'id': x.id, 'title': x.title.title, 'measure': x.measure.measure } for x in Attribute.objects.filter(category = category)]
         return Response(attributes)
+
+class GetSelectableAttributesView(APIView):
+    def get(self, request):
+        category_id = request.query_params['category']
+        category = Category.objects.get(id = category_id)
+        
+        selectable_attributes = [{'id': x.id, 'title': x.title, 'choises': [{'title' : ch.choise,'id': ch.id} for ch in x.choises.all()] } for x in SelectableAttribute.objects.filter(category = category)]
+        return Response(selectable_attributes)

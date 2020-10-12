@@ -27,7 +27,13 @@
 			</div>
 			<p class="attr_title">Характеристики товара:</p>
 			<div v-for="attr in attributes" class="product_attrs">
-				<span>{* attr.title *}:</span><input type="text" v-bind:name="'attr_' + attr.id"> {* attr.measure *}
+				<span>{* attr.title *}:</span><input type="text" v-bind:name="'attr_' + attr.id" required> {* attr.measure *}
+			</div>
+			<div v-for="attr in sel_attributes" class="product_attrs">
+				<span>{* attr.title *}:</span>
+				<select v-bind:name="'sel_attr_' + attr.id" required>
+					<option v-for="choise in attr.choises" v-bind:value="choise.id">{* choise.title *}</option>
+				</select>
 			</div>
 			<input type="submit" value="Добавить">
 		</form>

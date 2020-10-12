@@ -37,7 +37,7 @@ class Manufacturer(models.Model):
 
 
 class Attribute_title(models.Model):
-	title					= models.CharField(verbose_name="Наименование атрибута", max_length=60, unique=True)
+	title = models.CharField(verbose_name="Наименование атрибута", max_length=60, unique=True)
 	class Meta():
 		verbose_name = "Наименование атрибута"
 		verbose_name_plural = "Наименование атрибутов"
@@ -45,7 +45,7 @@ class Attribute_title(models.Model):
 		return self.title
 
 class Attribute_measure(models.Model):
-	measure				= models.CharField(verbose_name="Значение", max_length=60, unique=True)
+	measure	= models.CharField(verbose_name="Значение", max_length=60, unique=True)
 	class Meta():
 		verbose_name = "Единица измерения"
 		verbose_name_plural = "Единицы измерения"
@@ -53,8 +53,8 @@ class Attribute_measure(models.Model):
 		return self.measure
 
 class Attribute(models.Model):
-	title					= models.ForeignKey(Attribute_title, verbose_name='Атрибут', on_delete=models.CASCADE)
-	measure				= models.ForeignKey(Attribute_measure, verbose_name='Ед. Измерения', on_delete=models.CASCADE)
+	title = models.ForeignKey(Attribute_title, verbose_name='Атрибут', on_delete=models.CASCADE)
+	measure	= models.ForeignKey(Attribute_measure, verbose_name='Ед. Измерения', on_delete=models.CASCADE)
 	def __str__(self):
 		return self.title.title + ' - ' + self.measure.measure
 
@@ -63,6 +63,24 @@ class Attribute(models.Model):
 		verbose_name_plural = "(4) Атрибуты"
 
 
+class AtrributeChoises(models.Model):
+	choise = models.CharField(verbose_name='Вариант', max_length=120, unique=True)
+	class Meta():
+		verbose_name = "Вариант атрибутов"
+		verbose_name_plural = "Варианты атрибутов"
+	def __str__(self):
+		return self.choise
+
+class SelectableAttribute(models.Model):
+	title = models.CharField(verbose_name='Наименование', max_length=120, unique=True)
+	choises	= models.ManyToManyField(AtrributeChoises, verbose_name='Варианты')
+	def __str__(self):
+		return self.title
+
+	class Meta():
+		verbose_name = "(5) Выбираемый атрибут"
+		verbose_name_plural = "(5) Выбираемые атрибуты"
+
 class Category(models.Model):
 	def category_pic(instance, filename):
 		ext = '.' + filename.split('.')[-1]
@@ -70,13 +88,14 @@ class Category(models.Model):
 		format = instance.slug + ext
 		return os.path.join(path, format)
 
-	title					= models.CharField(verbose_name="Наименование:", max_length=90, unique=True)
-	slug					= models.SlugField(verbose_name="URL:", max_length=90, unique=True)
-	parent				= models.ForeignKey("self", verbose_name="Категория родитель:",on_delete=models.CASCADE, blank=True, null=True)
-	description		= models.TextField(verbose_name="Описание категории", max_length=1500, blank=True,)
-	svg						= models.CharField(verbose_name="Название SVG, для меню", max_length=30, blank=True,)
-	img						= models.ImageField(verbose_name="Изображение для категории", upload_to=category_pic, blank=True)
-	attr_list			= models.ManyToManyField(Attribute, verbose_name="Атрибуты для категории", blank=True)
+	title = models.CharField(verbose_name="Наименование:", max_length=90, unique=True)
+	slug = models.SlugField(verbose_name="URL:", max_length=90, unique=True)
+	parent = models.ForeignKey("self", verbose_name="Категория родитель:",on_delete=models.CASCADE, blank=True, null=True)
+	description = models.TextField(verbose_name="Описание категории", max_length=1500, blank=True,)
+	svg	= models.CharField(verbose_name="Название SVG, для меню", max_length=30, blank=True,)
+	img	= models.ImageField(verbose_name="Изображение для категории", upload_to=category_pic, blank=True)
+	attr_list = models.ManyToManyField(Attribute, verbose_name="Атрибуты для категории", blank=True)
+	selectable_attr_list = models.ManyToManyField(SelectableAttribute, verbose_name="Выбираемые атрибуты для категории", blank=True)
 
 	def save(self):
 		if not self.slug:
@@ -102,7 +121,7 @@ class Product(models.Model):
 
 	title = models.CharField(verbose_name='Наименование', max_length=120, unique=True)
 	category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
-	manufacturer	= models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE)
+	manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE)
 	articul	= models.IntegerField(verbose_name="Артикул")
 	slug = models.SlugField(verbose_name='URL', max_length=30, blank=False, unique=True)
 	img	= models.ImageField(verbose_name='Главная картинка', upload_to=get_file_path)
@@ -167,9 +186,9 @@ class ProductFiles(models.Model):
 		verbose_name_plural = "Файлы товаров"
 
 class Attribute_list(models.Model):
-	product		=	models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
-	attribute	= models.ForeignKey(Attribute, verbose_name='Атрибут', on_delete=models.CASCADE)
-	value					= models.CharField(verbose_name='Значение', max_length=20)
+	product	= models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+	attribute = models.ForeignKey(Attribute, verbose_name='Атрибут', on_delete=models.CASCADE)
+	value = models.CharField(verbose_name='Значение', max_length=20)
 
 	def __str__(self):
 		return '{product} - {attribute}'.format(product = self.product.title, attribute = self.attribute.title.title)
@@ -177,6 +196,19 @@ class Attribute_list(models.Model):
 	class Meta():
 		verbose_name = "Пул атрибутов"
 		verbose_name_plural = "Пул атрибутов"
+
+
+class SelectableAttribute_list(models.Model):
+	product	= models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+	attribute = models.ForeignKey(SelectableAttribute, verbose_name='Атрибут', on_delete=models.CASCADE)
+	value = models.ForeignKey(AtrributeChoises, verbose_name='Значение', on_delete=models.CASCADE)
+
+	def __str__(self):
+		return '{product} - {attribute}'.format(product = self.product.title, attribute = self.attribute.title)
+
+	class Meta():
+		verbose_name = "Пул выбираемых атрибутов"
+		verbose_name_plural = "Пул выбираемых атрибутов"
 
 ORDER_STATUS_CHOICES = (
     ('Оформлен', 'Оформлен'),
@@ -198,9 +230,13 @@ class Orders(models.Model):
 		return "#{0} - {1} {2}".format(self.id, self.last_name, self.first_name)
 
 	class Meta:
-		verbose_name = "(5) Заказ"
-		verbose_name_plural = "(5) Заказы"
+		verbose_name = "(6) Заказ"
+		verbose_name_plural = "(6) Заказы"
 
 admin.site.register(Orders)
 admin.site.register(ProductImages)
 admin.site.register(ProductFiles)
+
+admin.site.register(SelectableAttribute)
+admin.site.register(SelectableAttribute_list)
+admin.site.register(AtrributeChoises)

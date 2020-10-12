@@ -11,4 +11,5 @@ urlpatterns = [
     path('cart', views.cart, name='cart'),
     path('make_order', views.make_order, name='make_order'),
     path('api/get_attributes', views.GetAttributesView.as_view()),
+    path('api/get_sel_attributes', views.GetSelectableAttributesView.as_view()),
 ]

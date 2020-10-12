@@ -12,7 +12,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
 
 
 class CategoryAdmin(admin.ModelAdmin):
-	fields = ['title', 'parent', 'description', 'svg', 'img', 'attr_list']
+	fields = ['title', 'parent', 'description', 'svg', 'img', 'attr_list', 'selectable_attr_list']
 	list_display = ('title', 'parent')
 	list_filter = ['title', 'parent']
 	search_fields = ['title']
