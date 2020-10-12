@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Вход{% endblock title %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+		<p style='text-align:center; font-size: 1.5rem'>{{user.username}}</p>
+	{% else %}
+		<p style='text-align:center; font-size: 1.5rem'>Войди, если сможешь :)</p>
+	{% endif %}
+
+	<form action="{% url 'account:login' %}" method="POST">
+	{% csrf_token %}
+	<div class="input_wrap">
+			Логин: <input name="email" type="email">
+		</div>
+		<div class="input_wrap">
+			Пароль: <input name="password" type="password">
+	</div>
+	<input type="submit" value="Войти">
+	<div>
+		{{ error }}
+	</div>
+{% endblock content %}

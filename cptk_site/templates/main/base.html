@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>{% block title %}  {% endblock title %}</title>
+
+	{% block static %}
+		{% load static %}
+		{% comment %} Main Styles CSS File {% endcomment %}
+		<link rel="stylesheet" href="{% static 'css/catalog.min.css' %}">
+		{% comment %} --------- {% endcomment %}
+		{% comment %} Vue.js WEB Files {% endcomment %}
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		{% comment %} --------- {% endcomment %}
+	{% endblock static %}
+
+</head>
+<body>
+	<header>
+		<a href="{% url 'admin:index' %}">Админка</a>
+		<a href="{% url 'home' %}">Домiй</a>
+		<a href="{% url 'add_product' %}">Добавить продукт</a>
+		<a href="{% url 'products' %}">Все товары</a>
+		<a href="{% url 'cart' %}">Корзина: <span id='items_count'>0</span></a>
+
+		{% if user.is_authenticated %}
+			<a href="{% url 'account:account' %}">Кабинет</a>
+			<a href="{% url 'account:signout' %}">Выйти</a>
+		{% else %}
+			<a href="{% url 'account:login' %}">Войти</a>
+		{% endif %}
+	</header>
+
+	<main>
+		{% block content %}{% endblock content %}
+	</main>
+
+</body>
+
+<script src="{% static 'catalog/js/cart_data.js' %}"></script>
+<script src="{% static 'main/js/live.js' %}"></script>
+{% block script %}{% endblock script %}
+
+</html>

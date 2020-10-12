@@ -90,7 +90,6 @@ def add_product(request):
             post_f = form.save(commit=False)
             attributes = Attribute.objects.filter(category = post_f.category)
             post_f.save()
-            
             print(request.FILES)
 
             for image in request.FILES.getlist('images'):

@@ -1,0 +1,9 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Кабинет{% endblock title %}
+
+{% block content %}
+	{% if user.is_authenticated %}
+		Ито кабинет пользоваетля: {{user.username}}
+	{% endif %}
+{% endblock content %}

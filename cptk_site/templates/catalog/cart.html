@@ -1,5 +1,6 @@
-{% extends "main/layout.html" %}
+{% extends 'main/base.html' %}
 {% load staticfiles %}
+
 {% block content %}
 <h1>Корзина</h1>
 
@@ -29,11 +30,11 @@
         <br>
         <a href="{% url 'make_order' %}">Оформить заказ</a>
     </div>
-    
-</div>
-{% endblock %}
 
-{% block scripts %}
-<script src="{% static 'main/js/vue-dev.js' %}"></script>
-<script src="{% static 'catalog/js/cart.js' %}"></script>
-{% endblock %}
+</div>
+{% endblock content %}
+
+{% block script %}
+	<script src="{% static 'main/js/vue-dev.js' %}"></script>
+	<script src="{% static 'catalog/js/cart.js' %}"></script>
+{% endblock script %}

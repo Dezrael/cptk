@@ -1,5 +1,7 @@
-{% extends "main/layout.html" %}
+{% extends 'main/base.html' %}
+
 {% block title %}Список товаров{% endblock %}
+<<<<<<< HEAD
 {% block content %}
 {% if category %}
 <h1>{{ category.title }}</h1>
@@ -13,7 +15,17 @@
 <hr>
 {% endfor %}
 {% endblock %}
+=======
+>>>>>>> a106d1e05d5fce3d0bca6e8454f4b77364d599f0
 
-{% block scripts %}
+{% block content %}
+	<h1>Все товары: </h1>
+	<br>
+	{% for product in products %}
+		{{ product.title }}
+		<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
+		<hr>
+	{% endfor %}
+{% endblock content %}
 
-{% endblock %}
+{% block script %}{% endblock script %}
