@@ -1,12 +1,11 @@
 {% extends 'main/base.html' %}
 
 {% block title %}Список товаров{% endblock %}
-<<<<<<< HEAD
 {% block content %}
 {% if category %}
 <h1>{{ category.title }}</h1>
 {% else %}
-<h1> Товары </h1>
+<h1>Все товары: </h1>
 {% endif %}
 <br>
 {% for product in products %}
@@ -15,17 +14,5 @@
 <hr>
 {% endfor %}
 {% endblock %}
-=======
->>>>>>> a106d1e05d5fce3d0bca6e8454f4b77364d599f0
-
-{% block content %}
-	<h1>Все товары: </h1>
-	<br>
-	{% for product in products %}
-		{{ product.title }}
-		<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
-		<hr>
-	{% endfor %}
-{% endblock content %}
 
 {% block script %}{% endblock script %}
