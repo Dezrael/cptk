@@ -1,5 +1,6 @@
-{% extends "main/layout.html" %}
+{% extends 'main/base.html' %}
 {% load staticfiles %}
+
 {% block content %}
 <h1>Оформление заказа</h1>
 
@@ -8,14 +9,14 @@
     Фамилия: {{ form.last_name }} <br>
     Имя: {{ form.first_name }} <br>
     E-mail: {{ form.email }} <br>
-    Адрес: {{ form.address }} <br> 
-    Комментарий к заказу: {{ form.comment }} <br> 
+    Адрес: {{ form.address }} <br>
+    Комментарий к заказу: {{ form.comment }} <br>
     <input type="hidden" id="productsVal" name="products">
     <input type="hidden" id="totalVal" name="total">
     <input type="submit" value="Сделать заказ">
 </form>
-{% endblock %}
+{% endblock content %}
 
-{% block scripts %}
-<script src="{% static 'catalog/js/make_order.js' %}"></script>
-{% endblock %}
+{% block script %}
+	<script src="{% static 'catalog/js/make_order.js' %}"></script>
+{% endblock script %}

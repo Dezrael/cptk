@@ -1,0 +1,132 @@
+@import "_variables";
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	font-family: Roboto;
+	body {
+		background-color: $bg_light_main;
+		color: $color_main;
+	}
+	a {
+		color: $color_main;
+		text-decoration: none;
+		transition: color 0.2s;
+		&:visited {
+			color: inherit;
+		}
+		&:hover {
+			color: $color_acnt1;
+			transition: color 0.4s;
+		}
+	}
+}
+
+header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 60px;
+	background-color: #222;
+	color: $color_sec;
+	font-size: 0;
+	a {
+		font-size: 1.25rem;
+		margin: 0 15px;
+	}
+}
+
+main {
+	.form_wrapper {
+		min-width: 800px;
+		width: 70%;
+		margin: auto;
+		background-color: $bg_light_sec;
+		h3 {
+			font-size: 1.25rem;
+			text-align: center;
+		}
+		form {
+			padding: 2rem;
+			min-height: 350px;
+			.imgs {
+				float: left;
+				width: 260px;
+				text-align: center;
+				margin-right: 3rem;
+				.m_img {
+					height: 240px;
+					background-color: #fff;
+				}
+				.e_img {
+					height: 40px;
+					background-color: #fff;
+					margin-top: 2px;
+				}
+			}
+			.details {
+				display: grid;
+				grid-template-areas: "title price" "cat manuf" "ShortD ShortD" "Descr Descr";
+				margin-left: 40px;
+				> div {
+					margin: 6px 0;
+				}
+				select,
+				input {
+					width: 60%;
+					height: 1.5rem;
+				}
+				.title,
+				.cat {
+					float: left;
+				}
+				.title {
+					grid-area: title;
+				}
+				.price {
+					grid-area: price;
+					input {
+						width: 100px;
+					}
+				}
+				.category {
+					grid-area: cat;
+				}
+				.manufacturer {
+					grid-area: manuf;
+				}
+				.s_descr {
+					margin-top: 26px;
+					text-align: center;
+					grid-area: ShortD;
+				}
+				.descr {
+					text-align: center;
+					grid-area: Descr;
+				}
+				TextArea {
+					width: 100%;
+				}
+			}
+			.attr_title {
+				font-size: 2rem;
+				text-align: center;
+				margin-top: 26px;
+			}
+			.product_attrs {
+				width: 100%;
+				span {
+					display: block;
+					min-width: 150px;
+					width: 150px;
+				}
+			}
+		}
+	}
+}

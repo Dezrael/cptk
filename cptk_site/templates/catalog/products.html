@@ -1,15 +1,15 @@
-{% extends "main/layout.html" %}
+{% extends 'main/base.html' %}
+
 {% block title %}Список товаров{% endblock %}
+
 {% block content %}
-<h1>Товары</h1>
-<br>
-{% for product in products %}
-{{ product.title }}
-<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
-<hr>
-{% endfor %}
-{% endblock %}
+	<h1>Все товары: </h1>
+	<br>
+	{% for product in products %}
+		{{ product.title }}
+		<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
+		<hr>
+	{% endfor %}
+{% endblock content %}
 
-{% block scripts %}
-
-{% endblock %}
+{% block script %}{% endblock script %}

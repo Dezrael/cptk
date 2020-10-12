@@ -31,8 +31,8 @@ class Manufacturer(models.Model):
 
 	class Meta():
 		db_table = 'manufacturer'
-		verbose_name = "Производитель"
-		verbose_name_plural = "Производители"
+		verbose_name = "(3) Производитель"
+		verbose_name_plural = "(3) Производители"
 
 
 class Attribute_title(models.Model):
@@ -58,8 +58,8 @@ class Attribute(models.Model):
 		return self.title.title + ' - ' + self.measure.measure
 
 	class Meta():
-		verbose_name = "Атрибут"
-		verbose_name_plural = "Атрибуты"
+		verbose_name = "(4) Атрибут"
+		verbose_name_plural = "(4) Атрибуты"
 
 
 class Category(models.Model):
@@ -69,11 +69,11 @@ class Category(models.Model):
 		format = instance.slug + ext
 		return os.path.join(path, format)
 
-	title					= models.CharField(verbose_name="Название", max_length=90, unique=True)
-	slug					= models.SlugField(verbose_name="URL", max_length=90, unique=True)
-	parent				= models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
-	description		= models.TextField(verbose_name="Описание категории", max_length=1500)
-	svg						= models.CharField(verbose_name="Название SVG, для меню", max_length=30)
+	title					= models.CharField(verbose_name="Наименование:", max_length=90, unique=True)
+	slug					= models.SlugField(verbose_name="URL:", max_length=90, unique=True)
+	parent				= models.ForeignKey("self", verbose_name="Категория родитель:",on_delete=models.CASCADE, blank=True, null=True)
+	description		= models.TextField(verbose_name="Описание категории", max_length=1500, blank=True,)
+	svg						= models.CharField(verbose_name="Название SVG, для меню", max_length=30, blank=True,)
 	img						= models.ImageField(verbose_name="Изображение для категории", upload_to=category_pic, blank=True)
 	attr_list			= models.ManyToManyField(Attribute, verbose_name="Атрибуты для категории", blank=True)
 
@@ -87,8 +87,8 @@ class Category(models.Model):
 
 	class Meta():
 		db_table = 'category'
-		verbose_name = "Категория"
-		verbose_name_plural = "Категории"
+		verbose_name = "(2) Категория"
+		verbose_name_plural = "(2) Категории"
 
 
 class Product(models.Model):
@@ -126,8 +126,8 @@ class Product(models.Model):
 
 	class Meta():
 		db_table = 'product'
-		verbose_name = "Товар"
-		verbose_name_plural = "Товары"
+		verbose_name = "(1) Товар"
+		verbose_name_plural = "(1) Товары"
 
 class ProductImages(models.Model):
 	def get_file_path(instance, filename):
@@ -159,7 +159,7 @@ class Attribute_list(models.Model):
 
 ORDER_STATUS_CHOICES = (
     ('Оформлен', 'Оформлен'),
-	('В обработке', 'В обработке'),
+		('В обработке', 'В обработке'),
     ('Готов', 'Готов')
 )
 
@@ -177,10 +177,8 @@ class Orders(models.Model):
 		return "#{0} - {1} {2}".format(self.id, self.last_name, self.first_name)
 
 	class Meta:
-		verbose_name = "Заказ"
-		verbose_name_plural = "Заказы"
+		verbose_name = "(5) Заказ"
+		verbose_name_plural = "(5) Заказы"
 
-admin.site.register(Product)
 admin.site.register(Orders)
-admin.site.register(Attribute_list)
 admin.site.register(ProductImages)

@@ -1,29 +1,38 @@
-{% extends "main/layout.html" %}
-{% block title %}Добавить товар{% endblock %}
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Новый товар{% endblock title %}
+
 {% block content %}
-{% load staticfiles %}
-<div>
-    {{ error }}
-</div>
-<form method="POST" id="productApp" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>Добавить продукт</p>
-    Название: {{ form.title }} <br>
-    Категория: {{ form.category }} <br>
-    Производитель: {{ form.manufacturer }} <br>
-    Цена: {{ form.price }} руб<br> 
-    Краткое описание: {{ form.s_description }} <br> 
-    Полное описание: {{ form.description }} <br>
-    Главная картинка: {{ form.img }} <br>
-    Ещё картинки: <input name="images" type="file" accept="image/*" multiple> <br>
-    <div v-for="attr in attributes">
-        {* attr.title *} : <input type="text" v-bind:name="'attr_' + attr.id"> {* attr.measure *}
-    </div>
-    
-    <input type="submit" value="Добавить">
-</form>
-{% endblock %}
-{% block scripts %}
-<script src="{% static 'main/js/vue-dev.js' %}"></script>
-<script src="{% static 'catalog/js/add_product.js' %}"></script>
-{% endblock %}
+	<div class="form_wrapper">
+		<h3>Добавление нового товара</h3>
+		<form method="POST" id="productApp" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="imgs">
+				<div class="m_img">Главная картинка: {{ form.img }}</div>
+				<div class="e_img">Дополнительные картинки: <input name="images" type="file" accept="image/*" multiple></div>
+			</div>
+			<div class="details">
+				<div class="title"><label for="">Наименование:</label> {{ form.title }}</div>
+				<div class="price"><label for="">Цена:</label> {{ form.price }} </div>
+				<div class="cat"><label for="">Категория:</label> {{ form.category }}</div>
+				<div class="manuf"><label for="">Производитель:</label> {{ form.manufacturer }}</div>
+				<div class="s_descr">Краткое описание:<br> {{ form.s_description }}</div>
+				<div class="descr">Полное описание:<br> {{ form.description }}</div>
+			</div>
+			<p class="attr_title">Характеристики товара:</p>
+			<div v-for="attr in attributes" class="product_attrs">
+				<span>{* attr.title *}:</span><input type="text" v-bind:name="'attr_' + attr.id"> {* attr.measure *}
+			</div>
+			<input type="submit" value="Добавить">
+		</form>
+		<div class="f_error">
+			{{ error }}
+		</div>
+	</div>
+{% endblock content %}
+
+{% block script %}
+	<script src="{% static 'main/js/vue-dev.js' %}"></script>
+	<script src="{% static 'catalog/js/add_product.js' %}"></script>
+{% endblock script %}
