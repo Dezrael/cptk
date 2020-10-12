@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders
+from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders, ProductFiles
 from .forms import ProductForm, OrderForm
 
 from rest_framework.response import Response
@@ -97,6 +97,12 @@ def add_product(request):
                 pr_image.product = post_f
                 pr_image.image = image
                 pr_image.save()
+
+            for file in request.FILES.getlist('files'):
+                pr_file = ProductFiles()
+                pr_file.product = post_f
+                pr_file.file = file
+                pr_file.save()
 
             for attribute in attributes:
                 attr = Attribute_list(attribute = attribute, product = post_f, value = request.POST.get('attr_{id}'.format(id=attribute.id) , 0))

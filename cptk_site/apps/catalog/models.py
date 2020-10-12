@@ -152,6 +152,22 @@ class ProductImages(models.Model):
 		verbose_name = "Изображения товаров"
 		verbose_name_plural = "Изображения товаров"
 
+class ProductFiles(models.Model):
+	def get_file_path(instance, filename):
+		ext = filename.split('.')[-1]
+		filename = "%s.%s" % (uuid.uuid4(), ext)
+		return 'catalog/product/%s/%s/%s' % (filename[:1], filename[2:3], filename)
+
+	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+	file = models.FileField(verbose_name='Файл', upload_to=get_file_path)
+
+	def __str__(self):
+		return self.product.title
+
+	class Meta():
+		verbose_name = "Файлы товаров"
+		verbose_name_plural = "Файлы товаров"
+
 class Attribute_list(models.Model):
 	product		=	models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
 	attribute	= models.ForeignKey(Attribute, verbose_name='Атрибут', on_delete=models.CASCADE)
@@ -189,3 +205,4 @@ class Orders(models.Model):
 
 admin.site.register(Orders)
 admin.site.register(ProductImages)
+admin.site.register(ProductFiles)
