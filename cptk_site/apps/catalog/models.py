@@ -97,9 +97,8 @@ class Category(models.Model):
 
 class Product(models.Model):
 	def get_file_path(instance, filename):
-		ext = filename.split('.')[-1]
-		filename = "%s.%s" % (uuid.uuid4(), ext)
-		return 'catalog/product/%s/%s/%s' % (filename[:1], filename[2:3], filename)
+		path = "catalog/" + instance.slug + "/images/"
+		return os.path.join(path, filename)
 
 	title = models.CharField(verbose_name='Наименование', max_length=120, unique=True)
 	category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
@@ -138,9 +137,8 @@ class Product(models.Model):
 
 class ProductImages(models.Model):
 	def get_file_path(instance, filename):
-		ext = filename.split('.')[-1]
-		filename = "%s.%s" % (uuid.uuid4(), ext)
-		return 'catalog/product/%s/%s/%s' % (filename[:1], filename[2:3], filename)
+		path = "catalog/" + instance.product.slug + "/images/"
+		return os.path.join(path, filename)
 
 	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
 	image = models.ImageField(verbose_name='Изображение', upload_to=get_file_path)
@@ -154,9 +152,8 @@ class ProductImages(models.Model):
 
 class ProductFiles(models.Model):
 	def get_file_path(instance, filename):
-		ext = filename.split('.')[-1]
-		filename = "%s.%s" % (uuid.uuid4(), ext)
-		return 'catalog/product/%s/%s/%s' % (filename[:1], filename[2:3], filename)
+		path = "catalog/" + instance.product.slug + "/files/"
+		return os.path.join(path, filename)
 
 	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
 	file = models.FileField(verbose_name='Файл', upload_to=get_file_path)

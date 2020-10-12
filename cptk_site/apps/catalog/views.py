@@ -90,18 +90,13 @@ def add_product(request):
             post_f = form.save(commit=False)
             attributes = Attribute.objects.filter(category = post_f.category)
             post_f.save()
-            print(request.FILES)
 
             for image in request.FILES.getlist('images'):
-                pr_image = ProductImages()
-                pr_image.product = post_f
-                pr_image.image = image
+                pr_image = ProductImages(product = post_f, image = image)
                 pr_image.save()
 
             for file in request.FILES.getlist('files'):
-                pr_file = ProductFiles()
-                pr_file.product = post_f
-                pr_file.file = file
+                pr_file = ProductFiles(product = post_f, file = file)
                 pr_file.save()
 
             for attribute in attributes:
