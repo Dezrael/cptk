@@ -2,7 +2,8 @@ const vm = new Vue({
     delimiters: ['{*', '*}'],
     el: '#productApp',
     data: {
-        attributes: null
+        attributes: null,
+        files: {}
     },
     mounted () {
         let cat_selector = document.getElementById("id_category");
@@ -13,6 +14,9 @@ const vm = new Vue({
             fetch('api/get_attributes?category='+event.target.value)
             .then(response => response.json())
             .then(data => this.attributes = data);
+        },
+        filesUploaded: function(event) {
+            this.files = event.target.files;
         }
     }
 })

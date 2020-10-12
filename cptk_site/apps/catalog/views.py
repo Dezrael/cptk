@@ -96,7 +96,8 @@ def add_product(request):
                 pr_image.save()
 
             for file in request.FILES.getlist('files'):
-                pr_file = ProductFiles(product = post_f, file = file)
+                title = request.POST.get('file_{name}'.format(name=file) , 0)
+                pr_file = ProductFiles(title = title, product = post_f, file = file)
                 pr_file.save()
 
             for attribute in attributes:

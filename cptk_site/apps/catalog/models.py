@@ -144,7 +144,7 @@ class ProductImages(models.Model):
 	image = models.ImageField(verbose_name='Изображение', upload_to=get_file_path)
 
 	def __str__(self):
-		return self.product.title
+		return self.product.title + ' - ' + str(self.id)
 
 	class Meta():
 		verbose_name = "Изображения товаров"
@@ -155,11 +155,12 @@ class ProductFiles(models.Model):
 		path = "catalog/" + instance.product.slug + "/files/"
 		return os.path.join(path, filename)
 
+	title = models.CharField(verbose_name='Наименование', max_length=120)
 	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
 	file = models.FileField(verbose_name='Файл', upload_to=get_file_path)
 
 	def __str__(self):
-		return self.product.title
+		return self.product.title + ' - ' + self.title
 
 	class Meta():
 		verbose_name = "Файлы товаров"

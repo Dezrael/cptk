@@ -11,7 +11,11 @@
 			<div class="imgs">
 				<div class="m_img">Главная картинка: {{ form.img }}</div>
 				<div class="e_img">Дополнительные картинки: <input name="images" type="file" accept="image/*" multiple></div>
-				<div class="e_img">Дополнительные файлы: <input name="files" type="file" multiple></div>
+				<div class="e_img">Дополнительные файлы: <input name="files" type="file" multiple @change="filesUploaded"></div>
+				<div v-for="file in files">
+					Файл: {* file.name *} <br>
+					Название: <input type="text" v-bind:name="'file_' + file.name" required>
+				</div>
 			</div>
 			<div class="details">
 				<div class="title"><label for="">Наименование:</label> {{ form.title }}</div>
