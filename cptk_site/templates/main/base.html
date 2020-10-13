@@ -18,6 +18,7 @@
 
 </head>
 <body>
+	{% if user.is_authenticated %}
 	<header>
 		<a href="{% url 'admin:index' %}">Админка</a>
 		<a href="{% url 'home' %}">Домiй</a>
@@ -36,6 +37,9 @@
 	<main>
 		{% block content %}{% endblock content %}
 	</main>
+	{% else %}
+		<a href="{% url 'admin:index' %}" style="font-size: 30px;">Войдите в качестве администратора</a>
+	{% endif %}
 
 </body>
 
