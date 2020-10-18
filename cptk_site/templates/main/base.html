@@ -23,6 +23,7 @@
 		<a href="{% url 'admin:index' %}">Админка</a>
 		<a href="{% url 'home' %}">Домiй</a>
 		<a href="{% url 'add_product' %}">Добавить продукт</a>
+		<a href="{% url 'catalog' %}">Каталог</a>
 		<a href="{% url 'products' %}">Все товары</a>
 		<a href="{% url 'cart' %}">Корзина: <span id='items_count'>0</span></a>
 
@@ -38,7 +39,7 @@
 		{% block content %}{% endblock content %}
 	</main>
 	{% else %}
-		<a href="{% url 'admin:index' %}" style="font-size: 30px;">Войдите в качестве администратора</a>
+		<a href="{% url 'admin:index' %}" style="font-size: 30px; text-align: center; display: block;">Войдите в качестве администратора</a>
 	{% endif %}
 
 </body>

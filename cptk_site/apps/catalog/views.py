@@ -49,12 +49,14 @@ def products(request):
     )
 
 def product(request, slug):
-    product = Product.objects.get(slug__iexact=slug)
-    return render(
-        request,
-        'catalog/product.html',
-        context = {'product': product}
-    )
+		product = Product.objects.get(slug__iexact=slug)
+		imgs = ProductImages.objects.all()
+		docs = ProductFiles.objects.all()
+		return render(
+				request,
+				'catalog/product.html',
+				context = {'product': product, 'imgs': imgs, 'docs': docs}
+		)
 
 def make_order(request):
     if request.method == "POST":
@@ -93,12 +95,12 @@ def add_product(request):
             post_f.save()
 
             for image in request.FILES.getlist('images'):
-                pr_image = ProductImages(product = post_f, image = image)
+                pr_image = ProductImages(parent = post_f, image = image)
                 pr_image.save()
 
             for file in request.FILES.getlist('files'):
                 title = request.POST.get('file_{name}'.format(name=file) , 0)
-                pr_file = ProductFiles(title = title, product = post_f, file = file)
+                pr_file = ProductFiles(title = title, parent = post_f, file = file)
                 pr_file.save()
 
             for attribute in attributes:
@@ -138,6 +140,5 @@ class GetSelectableAttributesView(APIView):
     def get(self, request):
         category_id = request.query_params['category']
         category = Category.objects.get(id = category_id)
-        
         selectable_attributes = [{'id': x.id, 'title': x.title, 'choises': [{'title' : ch.choise,'id': ch.id} for ch in x.choises.all()] } for x in SelectableAttribute.objects.filter(category = category)]
         return Response(selectable_attributes)

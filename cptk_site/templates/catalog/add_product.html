@@ -16,6 +16,7 @@
 					Файл: {* file.name *} <br>
 					Название: <input type="text" v-bind:name="'file_' + file.name" required>
 				</div>
+				<input type="submit" value="Добавить">
 			</div>
 			<div class="details">
 				<div class="title"><label for="">Наименование:</label> {{ form.title }}</div>
@@ -27,7 +28,7 @@
 			</div>
 			<p class="attr_title">Характеристики товара:</p>
 			<div v-for="attr in attributes" class="product_attrs">
-				<span>{* attr.title *}:</span><input type="text" v-bind:name="'attr_' + attr.id" required> {* attr.measure *}
+				<span>{* attr.title *}:</span><input type="text" autocomplete=off v-bind:name="'attr_' + attr.id" required> {* attr.measure *}
 			</div>
 			<div v-for="attr in sel_attributes" class="product_attrs">
 				<span>{* attr.title *}:</span>
@@ -35,7 +36,6 @@
 					<option v-for="choise in attr.choises" v-bind:value="choise.id">{* choise.title *}</option>
 				</select>
 			</div>
-			<input type="submit" value="Добавить">
 		</form>
 		<div class="f_error">
 			{{ error }}

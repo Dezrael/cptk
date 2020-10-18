@@ -69,6 +69,23 @@ main {
 					background-color: #fff;
 					margin-top: 2px;
 				}
+				input[type=submit] {
+					display: block;
+					margin: 10px auto;
+					padding: 4px 0;
+					background-color: rgb(173, 255, 170);
+					border: 2px solid black;
+					outline: none;
+					width: 200px;
+					transition: .4s;
+					transition-property: background, border;
+					&:hover {
+						background-color: rgb(18, 255, 10);
+						border: 2px solid green;
+						transition: .4s;
+						transition-property: background, border;
+					}
+				}
 			}
 			.details {
 				display: grid;

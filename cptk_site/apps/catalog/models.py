@@ -31,26 +31,31 @@ class Manufacturer(models.Model):
 		return self.title
 
 	class Meta():
-		db_table = 'manufacturer'
+		db_table = 'c_manufacturer'
 		verbose_name = "(3) Производитель"
 		verbose_name_plural = "(3) Производители"
+
 
 
 class Attribute_title(models.Model):
 	title = models.CharField(verbose_name="Наименование атрибута", max_length=60, unique=True)
 	class Meta():
+		db_table = 'attr_title'
 		verbose_name = "Наименование атрибута"
 		verbose_name_plural = "Наименование атрибутов"
 	def __str__(self):
 		return self.title
 
+
 class Attribute_measure(models.Model):
 	measure	= models.CharField(verbose_name="Значение", max_length=60, unique=True)
 	class Meta():
+		db_table = 'attr_measure'
 		verbose_name = "Единица измерения"
 		verbose_name_plural = "Единицы измерения"
 	def __str__(self):
 		return self.measure
+
 
 class Attribute(models.Model):
 	title = models.ForeignKey(Attribute_title, verbose_name='Атрибут', on_delete=models.CASCADE)
@@ -59,6 +64,7 @@ class Attribute(models.Model):
 		return self.title.title + ' - ' + self.measure.measure
 
 	class Meta():
+		db_table = 'attr'
 		verbose_name = "(4) Атрибут"
 		verbose_name_plural = "(4) Атрибуты"
 
@@ -66,8 +72,9 @@ class Attribute(models.Model):
 class AtrributeChoises(models.Model):
 	choise = models.CharField(verbose_name='Вариант', max_length=120, unique=True)
 	class Meta():
-		verbose_name = "Вариант атрибутов"
-		verbose_name_plural = "Варианты атрибутов"
+		db_table = 'attr_choises'
+		verbose_name = "Вариант Selectable"
+		verbose_name_plural = "Варианты Selectable"
 	def __str__(self):
 		return self.choise
 
@@ -78,8 +85,10 @@ class SelectableAttribute(models.Model):
 		return self.title
 
 	class Meta():
+		db_table = 'attr_selectable'
 		verbose_name = "(5) Выбираемый атрибут"
 		verbose_name_plural = "(5) Выбираемые атрибуты"
+
 
 class Category(models.Model):
 	def category_pic(instance, filename):
@@ -109,22 +118,25 @@ class Category(models.Model):
 		return reverse('category',kwargs={'slug': self.slug})
 
 	class Meta():
-		db_table = 'category'
+		db_table = 'c_category'
 		verbose_name = "(2) Категория"
 		verbose_name_plural = "(2) Категории"
 
 
 class Product(models.Model):
 	def get_file_path(instance, filename):
+		ext = '.' + filename.split('.')[-1]
 		path = "catalog/" + instance.slug + "/images/"
-		return os.path.join(path, filename)
+		format = instance.slug + ext
+		return os.path.join(path, format)
+
 
 	title = models.CharField(verbose_name='Наименование', max_length=120, unique=True)
 	category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
 	manufacturer = models.ForeignKey(Manufacturer, verbose_name='Производитель', on_delete=models.CASCADE)
 	articul	= models.IntegerField(verbose_name="Артикул")
 	slug = models.SlugField(verbose_name='URL', max_length=30, blank=False, unique=True)
-	img	= models.ImageField(verbose_name='Главная картинка', upload_to=get_file_path)
+	img	= models.ImageField(verbose_name='Главная картинка', max_length=160, upload_to=get_file_path)
 	price = models.DecimalField(('Цена за 1'), decimal_places=2,max_digits=12, default=1.00, validators=[MinValueValidator(1.0)],)
 	s_description = models.TextField(verbose_name="Краткое описание", max_length=600)
 	description	= models.TextField(verbose_name="Полное описание", max_length=2000)
@@ -145,43 +157,47 @@ class Product(models.Model):
 			self.articul = int('{category}{manufacturer}{id}'.format(category=s_category, manufacturer = s_manufacturer, id = s_id))
 		super(Product, self).save()
 
-
 	def __str__(self):
 		return self.title
 
 	class Meta():
-		db_table = 'product'
+		db_table = 'c_product'
 		verbose_name = "(1) Товар"
 		verbose_name_plural = "(1) Товары"
 
+
 class ProductImages(models.Model):
 	def get_file_path(instance, filename):
-		path = "catalog/" + instance.product.slug + "/images/"
+		path = "catalog/" + instance.parent.slug + "/images/"
 		return os.path.join(path, filename)
 
-	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
-	image = models.ImageField(verbose_name='Изображение', upload_to=get_file_path)
+	parent = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+	image = models.ImageField(verbose_name='Изображение', unique=True, upload_to=get_file_path)
 
 	def __str__(self):
-		return self.product.title + ' - ' + str(self.id)
+		return self.parent.title + ' - ' + str(self.id)
 
 	class Meta():
+		db_table = 'c_product_imgs'
 		verbose_name = "Изображения товаров"
 		verbose_name_plural = "Изображения товаров"
 
 class ProductFiles(models.Model):
 	def get_file_path(instance, filename):
-		path = "catalog/" + instance.product.slug + "/files/"
-		return os.path.join(path, filename)
+		path 	= "catalog/" + instance.parent.slug + "/files/"
+		ext 	= '.' + filename.split('.')[-1]
+		format= instance.title + "-" + instance.parent.slug + ext
+		return os.path.join(path, format)
 
 	title = models.CharField(verbose_name='Наименование', max_length=120)
-	product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
+	parent = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
 	file = models.FileField(verbose_name='Файл', upload_to=get_file_path)
 
 	def __str__(self):
-		return self.product.title + ' - ' + self.title
+		return self.parent.title + ' - ' + self.title
 
 	class Meta():
+		db_table = 'c_product_docs'
 		verbose_name = "Файлы товаров"
 		verbose_name_plural = "Файлы товаров"
 
@@ -194,8 +210,9 @@ class Attribute_list(models.Model):
 		return '{product} - {attribute}'.format(product = self.product.title, attribute = self.attribute.title.title)
 
 	class Meta():
-		verbose_name = "Пул атрибутов"
-		verbose_name_plural = "Пул атрибутов"
+		db_table = 'attr_values'
+		verbose_name = "Все атрибуты"
+		verbose_name_plural = "Все атрибуты"
 
 
 class SelectableAttribute_list(models.Model):
@@ -207,13 +224,15 @@ class SelectableAttribute_list(models.Model):
 		return '{product} - {attribute}'.format(product = self.product.title, attribute = self.attribute.title)
 
 	class Meta():
-		verbose_name = "Пул выбираемых атрибутов"
-		verbose_name_plural = "Пул выбираемых атрибутов"
+		db_table = 'attr_values_selectable'
+		verbose_name = "Все Selectable"
+		verbose_name_plural = "Все Selectable"
 
 ORDER_STATUS_CHOICES = (
     ('Оформлен', 'Оформлен'),
 		('В обработке', 'В обработке'),
-    ('Готов', 'Готов')
+    ('Готов', 'Готов'),
+    ('Отменён', 'Отменён')
 )
 
 class Orders(models.Model):
@@ -230,13 +249,6 @@ class Orders(models.Model):
 		return "#{0} - {1} {2}".format(self.id, self.last_name, self.first_name)
 
 	class Meta:
+		db_table = 'c_order'
 		verbose_name = "(6) Заказ"
 		verbose_name_plural = "(6) Заказы"
-
-admin.site.register(Orders)
-admin.site.register(ProductImages)
-admin.site.register(ProductFiles)
-
-admin.site.register(SelectableAttribute)
-admin.site.register(SelectableAttribute_list)
-admin.site.register(AtrributeChoises)

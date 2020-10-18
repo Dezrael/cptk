@@ -9,9 +9,9 @@
 {% endif %}
 <br>
 {% for product in products %}
-<a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
-<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
-<hr>
+	<a href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+	<button onclick="addItem('{{ product.id }}', '{{ product.title }}', '{{ product.price }}')">Добавить в корзину</button>
+	<hr>
 {% endfor %}
 {% endblock %}
 

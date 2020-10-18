@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Manufacturer, Category, Product, Attribute, Attribute_measure, Attribute_title, Attribute_list
+from .models import Manufacturer, Category, Product, Attribute, Attribute_measure, Attribute_list, Attribute_title
 
 class ManufacturerAdmin(admin.ModelAdmin):
 	fields = ['title', 'image', 'description', 'link']
@@ -25,6 +25,7 @@ class AttributeAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 
 
+
 admin.site.register(Product)
 admin.site.register(Manufacturer, ManufacturerAdmin)
 admin.site.register(Category, CategoryAdmin)
@@ -34,3 +35,13 @@ admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(Attribute_measure)
 admin.site.register(Attribute_title)
 admin.site.register(Attribute_list)
+
+
+from .models import Orders, ProductImages, ProductFiles, SelectableAttribute, SelectableAttribute_list, AtrributeChoises
+admin.site.register(Orders)
+admin.site.register(ProductImages)
+admin.site.register(ProductFiles)
+
+admin.site.register(SelectableAttribute)
+admin.site.register(SelectableAttribute_list)
+admin.site.register(AtrributeChoises)

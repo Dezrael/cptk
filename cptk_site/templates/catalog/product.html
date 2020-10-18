@@ -2,5 +2,27 @@
 {% load staticfiles %}
 {% block content %}
 <h1>{{ product.title }}</h1>
+<p>{{product.articul}}</p>
+<p>{{product.price}}</p>
+<p>{{product.manufacturer}}</p>
+<p>{{product.category}}</p>
+<p>{{product.s_description|safe|linebreaksbr}}</p>
+<p>{{product.description|safe|linebreaksbr}}</p>
+<p>{{product.add_date}}</p>
+<p> <span>Main PIC</span> <img style="width: 100px" src="{{ MEDIA_URL }}{{product.img}}" alt="Проблемы с загрузкой картинки продукта"></p>
+<hr>
+{% for img in imgs %}
+	{% if img.parent.id == product.id %}
+		<img style="width: 100px" src="{{ MEDIA_URL }}{{img.image}}" alt="Проблемы с загрузкой картинки продукта">
+	{% else %}
+		fuck
+	{% endif %}
+{% endfor %}
+<hr>
+{% for doc in docs %}
+	{% if doc.parent.id == product.id %}
+		<p>Файл и  названием: {{doc.title}}</p>
+	{% endif %}
+{% endfor %}
 
 {% endblock %}

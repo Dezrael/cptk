@@ -3,13 +3,14 @@ from django import forms
 from .models import Product, Orders
 
 class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = {'title', 'category', 'manufacturer', 's_description',
-                  'description', 'img', 'price'}
+	title = forms.CharField(widget=forms.TextInput(attrs={'autocomplete':'off'}))
+	class Meta:
+			model = Product
+			fields = {'title', 'category', 'manufacturer', 's_description',
+								'description', 'img', 'price'}
 
-    def __init__(self, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
+	def __init__(self, *args, **kwargs):
+			super(ProductForm, self).__init__(*args, **kwargs)
 
 class OrderForm(forms.ModelForm):
     class Meta:
