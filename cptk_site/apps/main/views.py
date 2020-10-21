@@ -1,8 +1,11 @@
 from django.shortcuts import render
+from catalog.models import Manufacturer
 
 # Create your views here.
 def home(request):
-    return render(
-        request,
-        'main/home.html'
-    )
+	manuf = Manufacturer.objects.all()
+	return render(
+			request,
+			'main/home.html',
+			context = {'manufs': manuf}
+	)

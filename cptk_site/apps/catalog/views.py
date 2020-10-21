@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders, ProductFiles, SelectableAttribute, AtrributeChoises, SelectableAttribute_list
+from django.http import HttpResponseRedirect
+
+from .models import Attribute, Attribute_list, Category, ProductImages, Product, Orders, ProductFiles, SelectableAttribute, AtrributeChoises, SelectableAttribute_list, Attribute_measure, Attribute_title
 from .forms import ProductForm, OrderForm
 
 from rest_framework.response import Response
@@ -129,16 +131,46 @@ def add_product(request):
         )
 
 
+def edt_product(request, id):
+	try:
+		product 			= Product.objects.get(id=id)
+		attributes 		= Attribute_list.objects.filter(product_id=id)
+		attr_title 		= Attribute_title.objects.all()
+		attr_measure	= Attribute_measure.objects.all()
+
+		if request.method == "POST":
+			form = ProductForm(request.POST, request.FILES)
+			product.title = request.POST.get("title")
+			for attribute in attributes:
+				attr = Attribute_list(attribute = attribute, product = post_f, value = request.POST.get('attr_{id}'.format(id=attribute.id) , 0))
+				attr.save()
+			product.save()
+			return HttpResponseRedirect("/")
+		else:
+				return render(request, "catalog/edit_product.html", {"product": product, "attributes": attributes})
+	except Product.DoesNotExist:
+			return HttpResponseNotFound("<h2>Product not found</h2>")
+
+# удаление данных из бд
+def del_product(request, id):
+    try:
+        product = Product.objects.get(id=id)
+        product.delete()
+        return HttpResponseRedirect("/")
+    except Product.DoesNotExist:
+        return HttpResponseNotFound("<h2>Product not found</h2>")
+
+
 class GetAttributesView(APIView):
-    def get(self, request):
-        category_id = request.query_params['category']
-        category = Category.objects.get(id = category_id)
-        attributes = [{'id': x.id, 'title': x.title.title, 'measure': x.measure.measure } for x in Attribute.objects.filter(category = category)]
-        return Response(attributes)
+	def get(self, request):
+		category_id = request.query_params['category']
+		category = Category.objects.get(id = category_id)
+		attributes = [{'id': x.id, 'title': x.title.title, 'measure': x.measure.measure } for x in Attribute.objects.filter(category = category)]
+		return Response(attributes)
 
 class GetSelectableAttributesView(APIView):
-    def get(self, request):
-        category_id = request.query_params['category']
-        category = Category.objects.get(id = category_id)
-        selectable_attributes = [{'id': x.id, 'title': x.title, 'choises': [{'title' : ch.choise,'id': ch.id} for ch in x.choises.all()] } for x in SelectableAttribute.objects.filter(category = category)]
-        return Response(selectable_attributes)
+	def get(self, request):
+		category_id = request.query_params['category']
+		category = Category.objects.get(id = category_id)
+		selectable_attributes = [{'id': x.id, 'title': x.title, 'choises': [{'title' : ch.choise,'id': ch.id} for ch in x.choises.all()] } for x in SelectableAttribute.objects.filter(category = category)]
+		return Response(selectable_attributes)

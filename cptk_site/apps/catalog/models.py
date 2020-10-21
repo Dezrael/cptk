@@ -1,30 +1,32 @@
 from django.core.validators import FileExtensionValidator, MinValueValidator
-from django.utils import timezone
+
 import datetime, os
 from django.contrib import admin
-import uuid
 from django.shortcuts import reverse
 
 from slugify import slugify
 
 from django.db import models
 
+from .storage import OverwriteStorage
+
+
 class Manufacturer(models.Model):
 	def manufact_pic(instance, filename):
 		ext = '.' + filename.split('.')[-1]
-		path = "catalog/manufacturer/" + instance.slug
+		path = "catalog/manufacturers/" + instance.slug
 		format = instance.slug + ext
 		return os.path.join(path, format)
 
 	title = models.CharField(verbose_name="Название компании", max_length=60, unique=True)
 	slug = models.SlugField(verbose_name="URL", unique=True)
-	image = models.FileField(verbose_name="Логотип", upload_to=manufact_pic, validators=[FileExtensionValidator(['svg', 'png', 'jpg', 'jpeg', 'webp'])], blank=True)
+	image = models.FileField(verbose_name="Логотип", storage=OverwriteStorage(), upload_to=manufact_pic, validators=[FileExtensionValidator(['svg', 'png', 'jpg', 'jpeg', 'webp'])], blank=True)
 	description	= models.TextField(verbose_name="Описание", max_length=1500, blank=True)
 	link = models.CharField(verbose_name="Ссылка на сайт", max_length=120, blank=True)
+	hidden = models.BooleanField(verbose_name='Скрыть', default=False)
 
 	def save(self):
-		if not self.slug:
-			self.slug = slugify(self.title)
+		self.slug = slugify(self.title)
 		super(Manufacturer, self).save()
 
 	def __str__(self):
@@ -46,7 +48,6 @@ class Attribute_title(models.Model):
 	def __str__(self):
 		return self.title
 
-
 class Attribute_measure(models.Model):
 	measure	= models.CharField(verbose_name="Значение", max_length=60, unique=True)
 	class Meta():
@@ -56,18 +57,23 @@ class Attribute_measure(models.Model):
 	def __str__(self):
 		return self.measure
 
-
+from django.core.exceptions import ValidationError
 class Attribute(models.Model):
-	title = models.ForeignKey(Attribute_title, verbose_name='Атрибут', on_delete=models.CASCADE)
+	title 	= models.ForeignKey(Attribute_title, verbose_name='Атрибут', on_delete=models.CASCADE)
 	measure	= models.ForeignKey(Attribute_measure, verbose_name='Ед. Измерения', on_delete=models.CASCADE)
+	# Check if such pair of Title-Measure alredy exsits in DB. True - Exception
+	def clean(self):
+		alreadyexists = Attribute.objects.filter(title = self.title, measure = self.measure)
+		if alreadyexists.exists():
+			raise ValidationError({'title':'Такая пара уже существует'})
+
 	def __str__(self):
-		return self.title.title + ' - ' + self.measure.measure
+		return self.title.title
 
 	class Meta():
 		db_table = 'attr'
 		verbose_name = "(4) Атрибут"
 		verbose_name_plural = "(4) Атрибуты"
-
 
 class AtrributeChoises(models.Model):
 	choise = models.CharField(verbose_name='Вариант', max_length=120, unique=True)
@@ -90,25 +96,29 @@ class SelectableAttribute(models.Model):
 		verbose_name_plural = "(5) Выбираемые атрибуты"
 
 
-class Category(models.Model):
-	def category_pic(instance, filename):
+from mptt.models import MPTTModel, TreeForeignKey
+class Category(MPTTModel):
+	change_form_template = '/templates/admin/change_form.html'
+
+	def get_file_path(instance, filename):
 		ext = '.' + filename.split('.')[-1]
-		path = "catalog/category/pics/" + instance.slug
+		path = "catalog/categoryes/" + instance.slug
 		format = instance.slug + ext
 		return os.path.join(path, format)
 
 	title = models.CharField(verbose_name="Наименование:", max_length=90, unique=True)
-	slug = models.SlugField(verbose_name="URL:", max_length=90, unique=True)
-	parent = models.ForeignKey("self", verbose_name="Категория родитель:",on_delete=models.CASCADE, blank=True, null=True)
+	slug = models.SlugField(verbose_name="URL", max_length=90, unique=True)
+	parent = TreeForeignKey("self", verbose_name="Категория родитель:",on_delete=models.CASCADE, related_name='children', blank=True, null=True)
 	description = models.TextField(verbose_name="Описание категории", max_length=1500, blank=True,)
-	svg	= models.CharField(verbose_name="Название SVG, для меню", max_length=30, blank=True,)
-	img	= models.ImageField(verbose_name="Изображение для категории", upload_to=category_pic, blank=True)
+	svg	= models.TextField(verbose_name="SVG для меню", max_length=30, blank=True,)
+	img	= models.ImageField(verbose_name="Изображение", upload_to=get_file_path, blank=True)
 	attr_list = models.ManyToManyField(Attribute, verbose_name="Атрибуты для категории", blank=True)
 	selectable_attr_list = models.ManyToManyField(SelectableAttribute, verbose_name="Выбираемые атрибуты для категории", blank=True)
+	add_date = models.DateTimeField(verbose_name='Дата добавления', auto_now_add=True)
+	hidden = models.BooleanField(verbose_name='Скрыть', default=False)
 
 	def save(self):
-		if not self.slug:
-			self.slug = slugify(self.title)
+		self.slug = slugify(self.title)
 		super(Category, self).save()
 
 	def __str__(self):
@@ -116,6 +126,9 @@ class Category(models.Model):
 
 	def get_absolute_url(self):
 		return reverse('category',kwargs={'slug': self.slug})
+
+	class MPTTMeta:
+		order_insertion_by = ['title']
 
 	class Meta():
 		db_table = 'c_category'
@@ -126,10 +139,9 @@ class Category(models.Model):
 class Product(models.Model):
 	def get_file_path(instance, filename):
 		ext = '.' + filename.split('.')[-1]
-		path = "catalog/" + instance.slug + "/images/"
-		format = instance.slug + ext
+		path = "catalog/products/" + instance.slug + "/images/"
+		format = "main" + ext
 		return os.path.join(path, format)
-
 
 	title = models.CharField(verbose_name='Наименование', max_length=120, unique=True)
 	category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.CASCADE)
@@ -146,8 +158,7 @@ class Product(models.Model):
 		return reverse('product',kwargs={'slug': self.slug})
 
 	def save(self, *args, **kwargs):
-		if not self.slug:
-			self.slug = slugify(self.title)
+		self.slug = slugify(self.title)
 		if self.articul is None:
 			self.articul = 0
 			super(Product, self).save()
@@ -168,11 +179,11 @@ class Product(models.Model):
 
 class ProductImages(models.Model):
 	def get_file_path(instance, filename):
-		path = "catalog/" + instance.parent.slug + "/images/"
+		path = "catalog/products/" + instance.parent.slug + "/images/"
 		return os.path.join(path, filename)
 
 	parent = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
-	image = models.ImageField(verbose_name='Изображение', unique=True, upload_to=get_file_path)
+	image = models.ImageField(verbose_name='Изображение', storage=OverwriteStorage(), unique=True, upload_to=get_file_path)
 
 	def __str__(self):
 		return self.parent.title + ' - ' + str(self.id)
@@ -184,7 +195,7 @@ class ProductImages(models.Model):
 
 class ProductFiles(models.Model):
 	def get_file_path(instance, filename):
-		path 	= "catalog/" + instance.parent.slug + "/files/"
+		path 	= "catalog/products/" + instance.parent.slug + "/files/"
 		ext 	= '.' + filename.split('.')[-1]
 		format= instance.title + "-" + instance.parent.slug + ext
 		return os.path.join(path, format)

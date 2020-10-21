@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Редактировать товар{% endblock title %}
+
+{% block content %}
+	<div class="form_wrapper">
+		<h3>Изменение товара: {{product.title}}</h3>
+		<form method="POST">
+        {% csrf_token %}
+        <p>
+            <label>Введите наимнование</label><br>
+            <input type="text" name="title" value="{{product.title}}" />
+        </p>
+				{% for attr in attributes %}
+					<label>{{attr.attribute_id.title_id}} - {{attr.value}}</label><br>
+				{% endfor %}
+        <input type="submit" value="Сохранить" >
+    </form>
+		<div class="f_error">
+			{{ error }}
+		</div>
+	</div>
+{% endblock content %}
+
+{% block script %}
+	<script src="{% static 'main/js/vue-dev.js' %}"></script>
+	<script src="{% static 'catalog/js/add_product.js' %}"></script>
+{% endblock script %}

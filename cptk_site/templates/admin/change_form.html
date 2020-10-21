@@ -1,0 +1,43 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+
+<script>
+
+	// Подобие скрипта, которое проверяет, что выбрано в поле parent при загрузке страницы
+	document.addEventListener("DOMContentLoaded", function(event) {
+		var e = document.querySelector("#id_parent");
+		if(e !== null)
+			var attr = document.querySelector('.field-attr_list');
+			var sele = document.querySelector('.field-selectable_attr_list');
+			if (e.selectedIndex == 0 ) {
+				attr.style.display = 'None'; sele.style.display = 'None';
+			}
+			else {
+				attr.style.display = 'block'; sele.style.display = 'block';
+			}
+	});
+
+	// Ещё одно подобие, которое убирает поля атрибутов для 0-вой категории (ибо не нужны они там)
+	document.addEventListener('input', function (event) {
+		if (event.target.id !== 'id_parent') return;
+		else {
+			var attr = document.querySelector('.field-attr_list');
+			var sele = document.querySelector('.field-selectable_attr_list');
+			if (event.target.selectedIndex == 0 ) {
+				attr.style.display = 'None'; sele.style.display = 'None';
+			}
+			else {
+				attr.style.display = 'block'; sele.style.display = 'block';
+			}
+		}
+
+		// FOR DEBUG - Selected Index + Selected Option
+		//console.log(event.target.value);
+		//console.log(event.target.options[event.target.selectedIndex]);
+
+	}, false);
+</script>
+{% endblock %}
