@@ -2,7 +2,7 @@ from django import forms
 
 from mptt.forms import TreeNodeChoiceField
 
-from .models import Product, Orders, Category
+from .models import Product, Orders, Category, ProductFiles
 
 
 from ckeditor.widgets import CKEditorWidget
@@ -44,6 +44,15 @@ class ProductForm(forms.ModelForm):
 	def __init__(self, *args, **kwargs):
 			super(ProductForm, self).__init__(*args, **kwargs)
 
+
+from .validators import validate_pdf_extension
+class ProductFileForm(forms.ModelForm):
+	file = forms.FileField(
+		validators = [validate_pdf_extension],
+	)
+	class Meta:
+		model = ProductFiles
+		fields = "__all__"
 
 
 

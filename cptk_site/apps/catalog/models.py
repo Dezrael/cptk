@@ -202,7 +202,7 @@ class ProductFiles(models.Model):
 
 	title = models.CharField(verbose_name='Наименование', max_length=120)
 	parent = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE)
-	file = models.FileField(verbose_name='Файл', upload_to=get_file_path)
+	file = models.FileField(verbose_name='Файл', upload_to=get_file_path, validators=[FileExtensionValidator(['.pdf', 'pdf'])])
 
 	def __str__(self):
 		return self.parent.title + ' - ' + self.title
